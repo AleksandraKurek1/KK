@@ -23,3 +23,8 @@
 .empty-cart p{margin:6px 0}
 .empty-cart .btn{margin-top:12px}
 @media(max-width:520px){.checkout-line{flex-wrap:wrap}.checkout-product{min-width:40%}.quantity-control{order:3}.checkout-line>strong:last-child{margin-left:auto}}
+
+
+* span , a , div , p {
+    font-size: 0.9rem ! important;
+}
