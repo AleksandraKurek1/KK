@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Mruczek & Kawa — przytulna kocia kawiarnia, adopcje kotów i sklep z karmą.">
+  <title>Mruczek & Kawa — kocia kawiarnia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js" defer></script>
+</head>
+<body>
+  <div class="announcement">☕ Kawa, mruczenie i dobre serca — poznaj naszych podopiecznych!</div>
+  <header class="site-header">
+    <a class="logo" href="#home" aria-label="Mruczek i Kawa — strona główna"><span class="logo-mark">🐾</span><span>mruczek <em>&</em> kawa</span></a>
+    <button class="menu-toggle" aria-label="Otwórz menu" aria-expanded="false">☰</button>
+    <nav class="nav">
+      <a href="#koty">Poznaj koty</a><a href="#adopcja">Adopcja</a><a href="#sklep">Sklep</a><a href="#o-nas">O nas</a>
+      <a class="nav-cart" href="#sklep">Koszyk <span id="cart-count">0</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <span class="eyebrow">MAŁA KAWIARNIA • WIELKIE SERCA</span>
+        <h1>Tu kawa smakuje<br><span>lepiej z kotem.</span></h1>
+        <p>Wpadnij na ulubione cappuccino, poznaj futrzastych przyjaciół i może… znajdź swojego najlepszego towarzysza.</p>
+        <div class="hero-actions"><a class="btn btn-dark" href="#koty">Poznaj naszą ekipę <span>↗</span></a><a class="text-link" href="#adopcja">Jak wygląda adopcja? <span>→</span></a></div>
+        <div class="hero-note"><span class="avatar-stack"><i>🐈</i><i>🐈‍⬛</i><i>🐱</i></span><span><strong>10 wyjątkowych osobowości</strong><small>czeka na Twoją uwagę</small></span></div>
+      </div>
+      <div class="hero-art">
+        <div class="hero-image"><img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=1000&q=85" alt="Kot odpoczywający w przytulnym miejscu"></div>
+        <div class="floating-note note-top">♡ Adoptuj, nie kupuj</div><div class="floating-note note-bottom"><span>☕</span><span><strong>Świeżo parzona</strong><small>kawa każdego dnia</small></span></div>
+        <span class="decor decor-one">✳</span><span class="decor decor-two">✿</span>
+      </div>
+    </section>
+
+    <section class="values" id="o-nas">
+      <div><span class="value-icon">☕</span><span><strong>Dobra kawa</strong><small>Parzona z sercem</small></span></div>
+      <div><span class="value-icon">♡</span><span><strong>Odpowiedzialna adopcja</strong><small>Pomagamy znaleźć dom</small></span></div>
+      <div><span class="value-icon">✿</span><span><strong>Sklepik z troską</strong><small>Dobre jedzenie dla mruczków</small></span></div>
+    </section>
+
+    <section class="section cats-section" id="koty">
+      <div class="section-heading">
+        <div><span class="eyebrow">NASZA FUTRZASTA EKIPA</span><h2>Poznaj <span>mruczących</span> mieszkańców</h2><p>Każdy ma własny charakter, ulubione miejsce i mnóstwo miłości do rozdania.</p></div>
+        <div class="cat-controls"><label class="search-box"><span>⌕</span><input id="cat-search" type="search" placeholder="Szukaj kota..." aria-label="Szukaj kota"></label>
+          <select id="cat-filter" aria-label="Filtruj koty"><option value="all">Wszystkie koty</option><option value="adoption">Do adopcji</option><option value="cafe">Mieszkańcy kawiarni</option></select>
+        </div>
+      </div>
+      <div class="cat-grid" id="cat-grid"></div>
+      <p class="results-note" id="cat-results" aria-live="polite"></p>
+    </section>
+
+    <section class="adoption-banner" id="adopcja">
+      <div class="banner-illustration" aria-hidden="true"><span>🐾</span><span>♡</span><span>🐈</span></div>
+      <div class="banner-copy"><span class="eyebrow">PRZYJAŹŃ NA CAŁE ŻYCIE</span><h2>Może właśnie <em>Ty</em> jesteś<br>czyimś człowiekiem?</h2><p>Adopcja to piękny początek. Opowiemy Ci o charakterze kota, pomożemy przygotować dom i przejdziemy przez cały proces razem z Tobą.</p><a class="btn btn-light" href="mailto:adopcje@mruczekikawa.pl?subject=Zapytanie%20o%20adopcje">Zapytaj o adopcję <span>↗</span></a></div>
+    </section>
+
+    <section class="section shop-section" id="sklep">
+      <div class="section-heading">
+        <div><span class="eyebrow">DOBROCI DLA PUPILI</span><h2>Mały <span>sklepik</span> z karmą</h2><p>Starannie wybrane produkty, które umilą dzień Twojemu zwierzakowi.</p></div>
+        <div class="cart-summary">🛍️ <span id="cart-summary">Twój koszyk jest pusty</span></div>
+      </div>
+      <div class="product-grid" id="product-grid"></div>
+      <div class="checkout-strip"><div><strong>Każdy zakup ma znaczenie.</strong><p>Część dochodu ze sklepiku wspiera opiekę nad naszymi podopiecznymi.</p></div><button class="btn btn-dark" id="checkout-btn">Przejdź do zamówienia <span>→</span></button></div>
+    </section>
+
+    <section class="visit-section">
+      <div><span class="eyebrow">ZAPRASZAMY NA GŁASKANIE</span><h2>Twoja nowa ulubiona<br><em>chwila w ciągu dnia.</em></h2><p>Usiądź wygodnie, zamów coś pysznego i pozwól, by mruczenie poprawiło Ci humor.</p></div>
+      <div class="visit-details"><div><span>⌖</span><p><strong>Znajdziesz nas</strong><br>ul. Kocia 12, Kraków</p></div><div><span>◷</span><p><strong>Jesteśmy otwarci</strong><br>Pon–Nd · 10:00–20:00</p></div><a class="btn btn-dark" href="mailto:hej@mruczekikawa.pl">Napisz do nas ↗</a></div>
+    </section>
+  </main>
+
+  <footer><a class="logo footer-logo" href="#home"><span class="logo-mark">🐾</span><span>mruczek <em>&</em> kawa</span></a><p>Dużo miłości, trochę sierści i najlepsza kawa. ♡</p><small>© 2025 Mruczek & Kawa · Projekt demonstracyjny</small></footer>
+
+  <dialog id="adoption-dialog" class="modal">
+    <button class="modal-close" aria-label="Zamknij">×</button>
+    <div id="adoption-content"></div>
+  </dialog>
+  <dialog id="checkout-dialog" class="modal checkout-modal">
+    <button class="modal-close" aria-label="Zamknij">×</button>
+    <span class="eyebrow">TWÓJ KOSZYK</span><h2>Gotowi na pyszności?</h2>
+    <div id="checkout-content"></div>
+    <form id="checkout-form"><label>Twój e-mail<input type="email" required placeholder="imie@email.com"></label><button class="btn btn-dark" type="submit">Wyślij zapytanie o zamówienie</button></form>
+    <p class="fine-print">To wersja demonstracyjna — formularz nie pobiera płatności ani nie wysyła danych na serwer.</p>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
