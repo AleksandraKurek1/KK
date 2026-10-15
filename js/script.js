@@ -18,68 +18,211 @@ const products = [
  {id:103,name:"Kocie przysmaki",desc:"Małe kąski treningowe, 80 g",price:12.50,emoji:"🦴",img:"https://images.unsplash.com/photo-1582798358481-d199fb7347bb?auto=format&fit=crop&w=500&q=80"},
  {id:104,name:"Delikatny pasztet",desc:"Karma dla wrażliwych brzuszków, 200 g",price:6.50,emoji:"🍲",img:"https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=500&q=80"}
 ];
-const grid=document.querySelector("#cat-grid"), productGrid=document.querySelector("#product-grid");
-const money=n=>n.toLocaleString("pl-PL",{style:"currency",currency:"PLN"});
-const CART_KEY="mruczekikawa-cart-v1";
-function loadCart(){
- try {
-  const raw=JSON.parse(localStorage.getItem(CART_KEY)||"{}");
-  return new Map(Object.entries(raw).map(([id,qty])=>[Number(id),Math.max(0,Number(qty)||0)]).filter(([,qty])=>qty>0));
- } catch { return new Map(); }
+
+const grid = document.querySelector("#cat-grid");
+const productGrid = document.querySelector("#product-grid");
+const money = n => n.toLocaleString("pl-PL", {style:"currency", currency:"PLN"});
+const CART_KEY = "mruczekikawa-cart-v3";
+
+function loadCart() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CART_KEY) || localStorage.getItem("mruczekikawa-cart-v1") || "{}");
+    return new Map(Object.entries(saved)
+      .map(([id, qty]) => [Number(id), Math.max(0, parseInt(qty, 10) || 0)])
+      .filter(([id, qty]) => products.some(product => product.id === id) && qty > 0));
+  } catch (error) {
+    return new Map();
+  }
 }
-const cart=loadCart();
-function saveCart(){try{localStorage.setItem(CART_KEY,JSON.stringify(Object.fromEntries(cart)));}catch{}}
-function changeQty(id,delta){const next=(cart.get(id)||0)+delta;if(next<=0)cart.delete(id);else cart.set(id,next);saveCart();updateCart();}
-function renderCats(){
- const q=document.querySelector("#cat-search").value.trim().toLocaleLowerCase("pl-PL");
- const filter=document.querySelector("#cat-filter").value;
- const filtered=cats.filter(c=>(filter==="all"||c.status===filter)&&`${c.name} ${c.desc} ${c.personality}`.toLocaleLowerCase("pl-PL").includes(q));
- grid.innerHTML=filtered.length?filtered.map(c=>`<article class="cat-card"><div class="cat-photo"><img src="${c.img}" alt="Kot ${c.name}" loading="lazy"><span class="cat-badge ${c.status==="adoption"?"adopt":""}">${c.label}</span></div><div class="cat-info"><div class="cat-title"><h3>${c.name}</h3><span class="cat-age">${c.age}</span></div><p>${c.desc}</p><div class="cat-meta"><span class="personality">${c.personality}</span><button class="small-btn" data-cat="${c.id}">${c.status==="adoption"?"Poznaj mnie":"Moja historia"} ↗</button></div></div></article>`).join(""):`<div class="empty-state">Nie znaleźliśmy takiego kotka. Spróbuj zmienić wyszukiwanie 🐾</div>`;
- document.querySelector("#cat-results").textContent=`Pokazano ${filtered.length} z ${cats.length} kotów`;
+const cart = loadCart();
+
+function saveCart() {
+  try { localStorage.setItem(CART_KEY, JSON.stringify(Object.fromEntries(cart))); }
+  catch (error) { /* Koszyk nadal działa do czasu zamknięcia karty. */ }
 }
-function renderProducts(){productGrid.innerHTML=products.map(p=>`<article class="product-card"><div class="product-image">${p.img?`<img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('beforeend','<span class=product-emoji>${p.emoji}</span>')}`:`<span class="product-emoji">${p.emoji}</span>`}</div><h3>${p.name}</h3><p>${p.desc}</p><div class="product-bottom"><span class="price">${money(p.price)}</span><button class="add-btn" data-product="${p.id}" aria-label="Dodaj ${p.name} do koszyka">+</button></div></article>`).join("");}
-function updateCart(){const count=[...cart.values()].reduce((s,n)=>s+n,0);document.querySelector("#cart-count").textContent=count;document.querySelector("#cart-summary").textContent=count?`${count} szt. w koszyku · ${money(cartTotal())}`:"Twój koszyk jest pusty";}
-function cartTotal(){return products.reduce((sum,p)=>sum+p.price*(cart.get(p.id)||0),0)}
-function showToast(message){const toast=document.querySelector("#toast");toast.textContent=message;toast.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>toast.classList.remove("show"),2400)}
-document.querySelector("#cat-search").addEventListener("input",renderCats);document.querySelector("#cat-filter").addEventListener("change",renderCats);
-grid.addEventListener("click",e=>{const btn=e.target.closest("[data-cat]");if(!btn)return;const c=cats.find(x=>x.id===Number(btn.dataset.cat));const dlg=document.querySelector("#adoption-dialog");document.querySelector("#adoption-content").innerHTML=`<span class="eyebrow">${c.status==="adoption"?"MOŻE TO WŁAŚNIE TWÓJ KOT?":"POZNAJ NAS LEPIEJ"}</span><h2>Cześć, jestem ${c.name}!</h2><img class="modal-cat" src="${c.img}" alt="Kot ${c.name}"><p>${c.desc}</p><p><strong>Wiek:</strong> ${c.age}<br><strong>Charakter:</strong> ${c.personality}</p>${c.status==="adoption"?`<p>Opowiedz nam, jak możemy się z Tobą skontaktować. Formularz przygotuje wiadomość do zespołu adopcyjnego.</p><form class="adoption-form" data-adoption-form="${c.id}"><label>Twoje imię<input name="name" required minlength="2" placeholder="Jak masz na imię?"></label><label>Adres e-mail<input name="email" type="email" required placeholder="imie@email.com"></label><label>Wiadomość<textarea name="message" rows="3" placeholder="Napisz kilka słów o domu, który chcesz zaoferować."></textarea></label><button class="btn btn-dark" type="submit">Zapytaj o ${c.name} ↗</button></form>`:`<p>${c.name} jest stałym mieszkańcem kawiarni. Wpadnij poznać go osobiście!</p><a class="btn btn-dark" href="#o-nas">Odwiedź kawiarnię ↗</a>`}`;dlg.showModal();});
-document.querySelector("#adoption-content").addEventListener("submit",e=>{
- if(!e.target.matches("[data-adoption-form]"))return;
- e.preventDefault();
- const form=e.target, cat=cats.find(c=>c.id===Number(form.dataset.adoptionForm));
- const name=form.elements.name.value.trim(), email=form.elements.email.value.trim(), message=form.elements.message.value.trim();
- const subject=encodeURIComponent(`Zapytanie adopcyjne — ${cat.name}`);
- const body=encodeURIComponent(`Dzień dobry!\\n\\nChciał(a)bym dowiedzieć się więcej o adopcji kota ${cat.name}.\\n\\nImię: ${name}\\nE-mail: ${email}\\nWiadomość: ${message||"(brak dodatkowej wiadomości)"}\\n\\nProszę o kontakt w sprawie kolejnych kroków.`);
- document.querySelector("#adoption-dialog").close();
- window.location.href=`mailto:adopcje@mruczekikawa.pl?subject=${subject}&body=${body}`;
- showToast("Przygotowano wiadomość adopcyjną w programie pocztowym.");
-});
-productGrid.addEventListener("click",e=>{const btn=e.target.closest("[data-product]");if(!btn)return;const id=Number(btn.dataset.product);cart.set(id,(cart.get(id)||0)+1);updateCart();showToast("Dodano produkt do koszyka ♡");});
-function showCheckout(){
- const content=document.querySelector("#checkout-content");
- const entries=products.filter(p=>(cart.get(p.id)||0)>0);
- content.innerHTML=entries.length?entries.map(p=>`<div class="checkout-line"><span class="checkout-product">${p.name}<small>${money(p.price)} / szt.</small></span><span class="quantity-control"><button type="button" data-qty="${p.id}" data-delta="-1" aria-label="Zmniejsz ilość">−</button><strong>${cart.get(p.id)}</strong><button type="button" data-qty="${p.id}" data-delta="1" aria-label="Zwiększ ilość">+</button><button type="button" class="remove-item" data-remove="${p.id}" aria-label="Usuń produkt">Usuń</button></span><strong>${money(p.price*cart.get(p.id))}</strong></div>`).join("")+`<div class="checkout-total"><span>Razem</span><span>${money(cartTotal())}</span></div>`:`<p>Twój koszyk jest pusty. Dodaj coś pysznego dla swojego pupila!</p>`;
- document.querySelector("#checkout-form").style.display=entries.length?"block":"none";
- document.querySelector("#checkout-dialog").showModal();
+function cartTotal() {
+  return products.reduce((sum, product) => sum + product.price * (cart.get(product.id) || 0), 0);
 }
-document.querySelector("#checkout-content").addEventListener("click",e=>{
- const qty=e.target.closest("[data-qty]"), remove=e.target.closest("[data-remove]");
- if(qty){changeQty(Number(qty.dataset.qty),Number(qty.dataset.delta));showCheckout();}
- if(remove){cart.delete(Number(remove.dataset.remove));saveCart();updateCart();showCheckout();}
+function updateCart() {
+  const count = [...cart.values()].reduce((sum, qty) => sum + qty, 0);
+  const counter = document.querySelector("#cart-count");
+  const summary = document.querySelector("#cart-summary");
+  if (counter) counter.textContent = count;
+  if (summary) summary.textContent = count ? `${count} szt. w koszyku · ${money(cartTotal())}` : "Twój koszyk jest pusty";
+}
+function changeQty(id, delta) {
+  const product = products.find(item => item.id === Number(id));
+  if (!product) return;
+  const next = (cart.get(product.id) || 0) + Number(delta);
+  if (next <= 0) cart.delete(product.id);
+  else cart.set(product.id, next);
+  saveCart();
+  updateCart();
+}
+function showToast(message) {
+  const toast = document.querySelector("#toast");
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove("show"), 2400);
+}
+
+function renderCats() {
+  const search = document.querySelector("#cat-search");
+  const filterControl = document.querySelector("#cat-filter");
+  const q = (search?.value || "").trim().toLocaleLowerCase("pl-PL");
+  const filter = filterControl?.value || "all";
+  const filtered = cats.filter(cat =>
+    (filter === "all" || cat.status === filter) &&
+    `${cat.name} ${cat.desc} ${cat.personality}`.toLocaleLowerCase("pl-PL").includes(q)
+  );
+  grid.innerHTML = filtered.length ? filtered.map(cat => `
+    <article class="cat-card">
+      <div class="cat-photo"><img src="${cat.img}" alt="Kot ${cat.name}" loading="lazy"><span class="cat-badge ${cat.status === "adoption" ? "adopt" : ""}">${cat.label}</span></div>
+      <div class="cat-info"><div class="cat-title"><h3>${cat.name}</h3><span class="cat-age">${cat.age}</span></div>
+      <p>${cat.desc}</p><div class="cat-meta"><span class="personality">${cat.personality}</span>
+      <button type="button" class="small-btn" data-cat="${cat.id}">${cat.status === "adoption" ? "Poznaj mnie" : "Moja historia"} ↗</button></div></div>
+    </article>`).join("") : `<div class="empty-state">Nie znaleźliśmy takiego kotka. Spróbuj zmienić wyszukiwanie 🐾</div>`;
+  const results = document.querySelector("#cat-results");
+  if (results) results.textContent = `Pokazano ${filtered.length} z ${cats.length} kotów`;
+}
+
+function renderProducts() {
+  productGrid.innerHTML = products.map(product => `
+    <article class="product-card">
+      <div class="product-image"><img src="${product.img}" alt="${product.name}" loading="lazy"
+        onerror="this.remove();this.parentElement.insertAdjacentHTML('beforeend','&lt;span class=&quot;product-emoji&quot;&gt;${product.emoji}&lt;/span&gt;')"></div>
+      <h3>${product.name}</h3><p>${product.desc}</p>
+      <div class="product-bottom"><span class="price">${money(product.price)}</span>
+      <button type="button" class="add-btn" data-product="${product.id}" aria-label="Dodaj ${product.name} do koszyka">+</button></div>
+    </article>`).join("");
+}
+
+function showCheckout() {
+  const content = document.querySelector("#checkout-content");
+  const form = document.querySelector("#checkout-form");
+  const dialog = document.querySelector("#checkout-dialog");
+  const entries = products.filter(product => (cart.get(product.id) || 0) > 0);
+  if (!entries.length) {
+    content.innerHTML = `<div class="empty-cart"><p>Twój koszyk jest pusty.</p><p>Wróć do sklepiku i kliknij <strong>+</strong> przy wybranym produkcie.</p><button type="button" class="btn btn-dark" id="back-to-shop">Wróć do sklepu</button></div>`;
+    form.style.display = "none";
+  } else {
+    content.innerHTML = entries.map(product => `
+      <div class="checkout-line">
+        <span class="checkout-product">${product.name}<small>${money(product.price)} / szt.</small></span>
+        <span class="quantity-control">
+          <button type="button" data-qty="${product.id}" data-delta="-1" aria-label="Zmniejsz ilość">−</button>
+          <strong>${cart.get(product.id)}</strong>
+          <button type="button" data-qty="${product.id}" data-delta="1" aria-label="Zwiększ ilość">+</button>
+          <button type="button" class="remove-item" data-remove="${product.id}">Usuń</button>
+        </span><strong>${money(product.price * cart.get(product.id))}</strong>
+      </div>`).join("") + `<div class="checkout-total"><span>Razem</span><span>${money(cartTotal())}</span></div>`;
+    form.style.display = "block";
+  }
+  if (typeof dialog.showModal === "function") {
+    if (!dialog.open) dialog.showModal();
+  } else {
+    dialog.setAttribute("open", "");
+  }
+}
+
+document.querySelector("#cat-search")?.addEventListener("input", renderCats);
+document.querySelector("#cat-filter")?.addEventListener("change", renderCats);
+
+grid.addEventListener("click", event => {
+  const button = event.target.closest("[data-cat]");
+  if (!button) return;
+  const cat = cats.find(item => item.id === Number(button.dataset.cat));
+  const dialog = document.querySelector("#adoption-dialog");
+  const content = document.querySelector("#adoption-content");
+  content.innerHTML = `
+    <span class="eyebrow">${cat.status === "adoption" ? "MOŻE TO WŁAŚNIE TWÓJ KOT?" : "POZNAJ NAS LEPIEJ"}</span>
+    <h2>Cześć, jestem ${cat.name}!</h2><img class="modal-cat" src="${cat.img}" alt="Kot ${cat.name}">
+    <p>${cat.desc}</p><p><strong>Wiek:</strong> ${cat.age}<br><strong>Charakter:</strong> ${cat.personality}</p>
+    ${cat.status === "adoption" ? `
+      <p>Wypełnij formularz, a przygotujemy wiadomość do zespołu adopcyjnego.</p>
+      <form class="adoption-form" data-adoption-form="${cat.id}">
+        <label>Twoje imię<input name="name" required minlength="2" placeholder="Jak masz na imię?"></label>
+        <label>Adres e-mail<input name="email" type="email" required placeholder="imie@email.com"></label>
+        <label>Wiadomość<textarea name="message" rows="3" placeholder="Kilka słów o domu dla kota"></textarea></label>
+        <button class="btn btn-dark" type="submit">Zapytaj o ${cat.name} ↗</button>
+      </form>` : `<p>${cat.name} jest stałym mieszkańcem kawiarni. Wpadnij poznać go osobiście!</p>`}`;
+  dialog.showModal();
 });
-document.querySelector("#checkout-btn").addEventListener("click",showCheckout);
-document.querySelector("#checkout-form").addEventListener("submit",e=>{
- e.preventDefault();
- const email=e.currentTarget.querySelector('input[type="email"]').value.trim();
- const lines=products.filter(p=>(cart.get(p.id)||0)>0).map(p=>`${p.name} — ${cart.get(p.id)} szt. x ${money(p.price)} = ${money(p.price*cart.get(p.id))}`);
- if(!lines.length){showToast("Koszyk jest pusty.");return;}
- const subject=encodeURIComponent("Zamówienie ze sklepiku Mruczek & Kawa");
- const body=encodeURIComponent(`Dzień dobry!\\nChcę złożyć zamówienie:\\n\\n${lines.join("\\n")}\\n\\nRazem: ${money(cartTotal())}\\nE-mail kontaktowy: ${email}\\n\\nProszę o informację dotyczącą dostępności i dostawy.`);
- document.querySelector("#checkout-dialog").close();
- window.location.href=`mailto:hej@mruczekikawa.pl?subject=${subject}&body=${body}`;
- showToast("Przygotowano wiadomość e-mail z zamówieniem.");
+
+document.querySelector("#adoption-content").addEventListener("submit", event => {
+  if (!event.target.matches("[data-adoption-form]")) return;
+  event.preventDefault();
+  const form = event.target;
+  const cat = cats.find(item => item.id === Number(form.dataset.adoptionForm));
+  const name = form.elements.name.value.trim();
+  const email = form.elements.email.value.trim();
+  const message = form.elements.message.value.trim();
+  const subject = encodeURIComponent(`Zapytanie adopcyjne — ${cat.name}`);
+  const body = encodeURIComponent(`Dzień dobry!\n\nChciał(a)bym dowiedzieć się więcej o adopcji kota ${cat.name}.\n\nImię: ${name}\nE-mail: ${email}\nWiadomość: ${message || "(brak dodatkowej wiadomości)"}\n\nProszę o kontakt w sprawie kolejnych kroków.`);
+  document.querySelector("#adoption-dialog").close();
+  window.location.href = `mailto:adopcje@mruczekikawa.pl?subject=${subject}&body=${body}`;
+  showToast("Przygotowano wiadomość adopcyjną w programie pocztowym.");
 });
-document.querySelectorAll(".modal-close").forEach(b=>b.addEventListener("click",()=>b.closest("dialog").close()));
-document.querySelectorAll("dialog").forEach(d=>d.addEventListener("click",e=>{if(e.target===d)d.close()}));
-const menuToggle=document.querySelector(".menu-toggle"),nav=document.querySelector(".nav");menuToggle.addEventListener("click",()=>{const open=nav.classList.toggle("open");menuToggle.setAttribute("aria-expanded",String(open));menuToggle.textContent=open?"×":"☰"});nav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{nav.classList.remove("open");menuToggle.setAttribute("aria-expanded","false");menuToggle.textContent="☰"}));
-renderCats();renderProducts();updateCart();
+
+productGrid.addEventListener("click", event => {
+  const button = event.target.closest("[data-product]");
+  if (!button) return;
+  changeQty(Number(button.dataset.product), 1);
+  showToast("Dodano produkt do koszyka ♡");
+});
+
+document.querySelector("#checkout-content").addEventListener("click", event => {
+  if (event.target.closest("#back-to-shop")) {
+    document.querySelector("#checkout-dialog").close();
+    document.querySelector("#sklep").scrollIntoView({behavior:"smooth"});
+    return;
+  }
+  const qtyButton = event.target.closest("[data-qty]");
+  const removeButton = event.target.closest("[data-remove]");
+  if (qtyButton) {
+    changeQty(Number(qtyButton.dataset.qty), Number(qtyButton.dataset.delta));
+    showCheckout();
+  } else if (removeButton) {
+    cart.delete(Number(removeButton.dataset.remove));
+    saveCart();
+    updateCart();
+    showCheckout();
+  }
+});
+
+document.querySelector("#checkout-btn").addEventListener("click", showCheckout);
+document.querySelector("#checkout-form").addEventListener("submit", event => {
+  event.preventDefault();
+  const email = event.currentTarget.querySelector('input[type="email"]').value.trim();
+  const entries = products.filter(product => (cart.get(product.id) || 0) > 0);
+  if (!entries.length) {
+    showToast("Najpierw dodaj produkt do koszyka.");
+    return;
+  }
+  const lines = entries.map(product => `${product.name} — ${cart.get(product.id)} szt. x ${money(product.price)} = ${money(product.price * cart.get(product.id))}`);
+  const subject = encodeURIComponent("Zamówienie ze sklepiku Mruczek & Kawa");
+  const body = encodeURIComponent(`Dzień dobry!\nChcę złożyć zamówienie:\n\n${lines.join("\n")}\n\nRazem: ${money(cartTotal())}\nE-mail kontaktowy: ${email}\n\nProszę o informację dotyczącą dostępności i dostawy.`);
+  window.location.href = `mailto:hej@mruczekikawa.pl?subject=${subject}&body=${body}`;
+  showToast("Przygotowano wiadomość z zamówieniem. Wyślij ją w swoim programie pocztowym.");
+});
+
+document.querySelectorAll(".modal-close").forEach(button => button.addEventListener("click", () => button.closest("dialog").close()));
+document.querySelectorAll("dialog").forEach(dialog => dialog.addEventListener("click", event => { if (event.target === dialog) dialog.close(); }));
+const menuToggle = document.querySelector(".menu-toggle");
+const nav = document.querySelector(".nav");
+menuToggle.addEventListener("click", () => {
+  const open = nav.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", String(open));
+  menuToggle.textContent = open ? "×" : "☰";
+});
+nav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
+  nav.classList.remove("open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.textContent = "☰";
+}));
+
+renderCats();
+renderProducts();
+updateCart();
