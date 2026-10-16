@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Mruczek & Kawa — przytulna kocia kawiarnia, adopcje kotów i sklep z karmą.">
+  <meta name="description" content="Mruczek & Kawa - przytulna kocia kawiarnia, adopcje kotów i sklep z karmą.">
   <title>Mruczek & Kawa — kocia kawiarnia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
   <script src="js/script.js" defer></script>
 </head>
 <body>
-  <div class="announcement">☕ Kawa, mruczenie i dobre serca - Poznaj naszych podopiecznych!</div>
+  <div class="announcement">☕ Kawa, mruczenie i dobre serca — poznaj naszych podopiecznych!</div>
   <header class="site-header">
     <a class="logo" href="#home" aria-label="Mruczek i Kawa — strona główna"><span class="logo-mark">🐾</span><span>mruczek <em>&</em> kawa</span></a>
     <button class="menu-toggle" aria-label="Otwórz menu" aria-expanded="false">☰</button>
@@ -38,16 +38,32 @@
       </div>
     </section>
 
-    <section class="values" id="o-nas">
+    <section class="values" id="wartosci">
       <div><span class="value-icon">☕</span><span><strong>Dobra kawa</strong><small>Parzona z sercem</small></span></div>
       <div><span class="value-icon">♡</span><span><strong>Odpowiedzialna adopcja</strong><small>Pomagamy znaleźć dom</small></span></div>
       <div><span class="value-icon">✿</span><span><strong>Sklepik z troską</strong><small>Dobre jedzenie dla mruczków</small></span></div>
     </section>
 
+    <section class="section about-section" id="o-nas">
+      <div class="about-intro">
+        <span class="eyebrow">POZNAJMY SIĘ LEPIEJ</span>
+        <h2>Więcej niż kawiarnia.<br><span>Mały dom z wielkim sercem.</span></h2>
+        <p>Mruczek & Kawa to przytulne miejsce dla ludzi, którzy kochają dobrą kawę i wierzą, że każdy kot zasługuje na bezpieczeństwo, cierpliwość i własny kąt. Stworzyliśmy je po to, by łączyć codzienną przyjemność z pomaganiem mruczącym przyjaciołom.</p>
+        <p>U nas możesz zwolnić tempo, napić się czegoś pysznego, poznać kocich mieszkańców i dowiedzieć się, jak wygląda odpowiedzialna adopcja. Nie musisz od razu adoptować — czasem wystarczy odwiedzina, dobre słowo albo wsparcie naszego sklepiku.</p>
+        <div class="about-actions"><a class="btn btn-dark" href="#koty">Poznaj naszych kotów <span>↗</span></a><a class="text-link" href="mailto:hej@mruczekikawa.pl">Napisz do nas →</a></div>
+      </div>
+      <div class="about-cards">
+        <article class="about-card"><span>☕</span><h3>Kawa bez pośpiechu</h3><p>Serwujemy kawowe klasyki w spokojnej, przyjaznej atmosferze. To dobre miejsce na chwilę oddechu i małą przyjemność w środku dnia.</p></article>
+        <article class="about-card"><span>🐾</span><h3>Koty na pierwszym miejscu</h3><p>Szanujemy granice naszych podopiecznych. Koty same decydują, czy mają ochotę na głaskanie, zabawę, czy drzemkę w swoim ulubionym miejscu.</p></article>
+        <article class="about-card"><span>♡</span><h3>Pomaganie z głową</h3><p>Wspieramy odpowiedzialne adopcje i pomagamy przyszłym opiekunom poznać potrzeby kota przed podjęciem decyzji o wspólnym domu.</p></article>
+      </div>
+      <div class="about-note"><strong>Nasza zasada jest prosta:</strong> kawa ma poprawiać humor, a każda kocia relacja ma opierać się na trosce i szacunku. Dziękujemy, że jesteś częścią tej historii. ♡</div>
+    </section>
+
     <section class="section cats-section" id="koty">
       <div class="section-heading">
         <div><span class="eyebrow">NASZA FUTRZASTA EKIPA</span><h2>Poznaj <span>mruczących</span> mieszkańców</h2><p>Każdy ma własny charakter, ulubione miejsce i mnóstwo miłości do rozdania.</p></div>
-        <div class="cat-controls"><label class="search-box"><span>⌕</span><input id="cat-search" type="search" placeholder="Szukaj kota..." aria-label="Szukaj kota"></label>
+        <div class="cat-controls"><label class="search-box"><span>⌕</span><input id="cat-search" type="search" placeholder="Szukaj..." aria-label="Szukaj kota"></label>
           <select id="cat-filter" aria-label="Filtruj koty"><option value="all">Wszystkie koty</option><option value="adoption">Do adopcji</option><option value="cafe">Mieszkańcy kawiarni</option></select>
         </div>
       </div>
@@ -75,7 +91,7 @@
     </section>
   </main>
 
-  <footer><a class="logo footer-logo" href="#home"><span class="logo-mark">🐾</span><span>mruczek <em>&</em> kawa</span></a><p>Dużo miłości, trochę sierści i najlepsza kawa. ♡</p><small>© 2025 Mruczek & Kawa · Projekt</small></footer>
+  <footer><a class="logo footer-logo" href="#home"><span class="logo-mark">🐾</span><span>mruczek <em>&</em> kawa</span></a><p>Dużo miłości, trochę sierści i najlepsza kawa. ♡</p><small>© 2025 Mruczek & Kawa · Projekt demonstracyjny</small></footer>
 
   <dialog id="adoption-dialog" class="modal">
     <button class="modal-close" aria-label="Zamknij">×</button>
